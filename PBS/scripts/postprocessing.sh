@@ -1,5 +1,5 @@
 #!/bin/bash
-jID_launch=$( qstat | grep Lnch_${groupname} | cut -d ' ' -f 1 )
+jID_launch=$(qstat -u $USER | grep Lnch_${groupname} | cut -d '.' -f 1 )
 if [ -z $postproc ]
 then
     waitstring3="#PBS -W depend=afterok:${jID_launch}"
@@ -11,7 +11,7 @@ qsub <<- POSTPROCWRAP
 #PBS -S /bin/bash
 #PBS -q $queue
 #PBS -l $walltime
-#PBS -l nodes=1:ppn=1:AMD
+#PBS -l nodes=1:ppn=1
 #PBS -l mem=4gb
 #PBS -o ${logdir}/${timestamp}_postproc_wrap_${groupname}.log
 #PBS -j oe
@@ -20,7 +20,7 @@ ${waitstring3}
 
 date +"%Y-%m-%d %H:%M:%S"
 
-jID_hic30=\$(qstat | grep hic30_${groupname} |cut -d ' ' -f 1)
+jID_hic30=\$(qstat -u $USER | grep hic30_${groupname} |cut -d '.' -f 1)
 
 if [ -z $postproc ]
 then
@@ -33,7 +33,7 @@ qsub <<POSTPROCESS
     #PBS -S /bin/bash
     #PBS -q $queue
     #PBS -l $long_walltime
-    #PBS -l nodes=1:ppn=1:gpus=1:GPU 
+    #PBS -l nodes=1:ppn=28:gpus=1
     #PBS -l mem=60gb
     #PBS -o ${logdir}/\${timestamp}_postproc_${groupname}.log
     #PBS -j oe
@@ -52,7 +52,7 @@ qsub <<POSTPROCESS
 POSTPROCESS
 POSTPROCWRAP
 
-jID_postprocwrap=$( qstat |grep PPrWrp${groupname} | cut -d ' ' -f 1 )
+jID_postprocwrap=$(qstat -u $USER |grep PPrWrp${groupname} | cut -d '.' -f 1)
 echo $jID_postprowrap
 wait
 timestamp=$(date +"%s" | cut -c 4-10)
@@ -66,11 +66,11 @@ qsub <<- FINCK
 #PBS -W depend=afterok:${jID_postprocwrap}
 
 date +"%Y-%m-%d %H:%M:%S"    
-jID_hic30=\$(qstat | grep hic30_${groupname} |cut -d ' ' -f 1)
-jID_stats0=\$(qstat | grep stats0${groupname} |cut -d ' ' -f 1)
-jID_stats30=\$(qstat | grep stats30${groupname} |cut -d ' ' -f 1)
-jID_hic=\$(qstat | grep hic0_${groupname} |cut -d ' ' -f 1)
-jID_postproc=\$(qstat | grep PProc_${groupname} |cut -d ' ' -f 1)
+jID_hic30=\$(qstat -u $USER | grep hic30_${groupname} |cut -d '.' -f 1)
+jID_stats0=\$(qstat -u $USER | grep stats0${groupname} |cut -d '.' -f 1)
+jID_stats30=\$(qstat -u $USER | grep stats30${groupname} |cut -d '.' -f 1)
+jID_hic=\$(qstat -u $USER | grep hic0_${groupname} |cut -d '.' -f 1)
+jID_postproc=\$(qstat -u $USER | grep PProc_${groupname} |cut -d '.' -f 1)
 
 waitstring5="#PBS -W depend=afterok:\${jID_postproc}"
 if [ -z $postproc ]
@@ -82,7 +82,7 @@ qsub <<DONE
     #PBS -S /bin/bash
     #PBS -q $queue
     #PBS -l $walltime
-    #PBS -l nodes=1:ppn=1:AMD 
+    #PBS -l nodes=1:ppn=1
     #PBS -l mem=4gb
     #PBS -o ${logdir}/\${timestamp}_done_${groupname}.log
     #PBS -j oe
