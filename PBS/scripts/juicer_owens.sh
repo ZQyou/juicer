@@ -85,7 +85,7 @@ load_cuda='module load cuda/8.0.44'
 
 # Juicer directory, contains scripts/, references/, and restriction_sites/
 # can also be set in options via -D
-juiceDir="/fs/scratch/PZS0710/zyou/src/juicer"
+juiceDir=""
 # default queue, can also be set in options via -q
 queue="serial"
 # default queue time, can also be set in options via -Q
@@ -99,7 +99,7 @@ long_walltime="walltime=4:00:00"
 # give your email address to be used in #PBS -M to receive notifications when job error occurs.
 # Must be either set with an email address or skipped
 # This email is not included in the launch stat and postprocessing steps, add manually if needed
-EXTRA="#PBS -A XXXXXX"
+EXTRA="#PBS -A $(groups |cut -d' ' -f1)"
 splitsize=90000000
 # fastq files should look like filename_R1.fastq and filename_R2.fastq
 # if your fastq files look different, change this value
@@ -188,6 +188,7 @@ while getopts "d:g:R:k:a:hrq:s:p:l:y:z:S:C:D:Q:L:x" opt; do
     p) genomePath=$OPTARG ;;
     y) site_file=$OPTARG ;;
     z) refSeq=$OPTARG ;;
+    A) EXTRA="#PBS -A $OPTARG" ;;
     S) stage=$OPTARG ;;
     C) splitsize=$OPTARG ;;
     D) juiceDir=$OPTARG ;;
