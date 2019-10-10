@@ -139,7 +139,7 @@ qsub <<- HICWORK
 	echo "finished stats job,now launching the hic job."    
 	${load_java}
 	export _JAVA_OPTIONS=-Xmx16384m
-	if [ \"$nofrag\" -eq 1 ]
+	if [ $nofrag -eq 1 ]
 	then 
 		${juiceDir}/scripts/juicer_tools pre -s $outputdir/inter.txt -g $outputdir/inter_hists.m -q 1 $outputdir/merged_nodups.txt $outputdir/inter.hic $genomePath
 	else 
@@ -168,7 +168,7 @@ qsub <<- HIC30WORK
 	cat $splitdir/*.res.txt | awk -f ${juiceDir}/scripts/stats_sub.awk >> $outputdir/inter_30.txt
 	java -cp ${juiceDir}/scripts/ LibraryComplexity $outputdir inter_30.txt >> $outputdir/inter_30.txt
 	${juiceDir}/scripts/statistics.pl -s $site_file -l $ligation -o $outputdir/inter_30.txt -q 30 $outputdir/merged_nodups.txt
-	if [  \"$nofrag\" -eq 1 ]
+	if [  $nofrag -eq 1 ]
 	then 
 	${juiceDir}/scripts/juicer_tools pre -s $outputdir/inter_30.txt -g $outputdir/inter_30_hists.m -q 30 $outputdir/merged_nodups.txt $outputdir/inter_30.hic $genomePath
 	else 
